@@ -18,6 +18,6 @@ public class Main {
 
         Check check = new Check();
         String[] argsForDebug = new String[] {"3-5", "4-25"};
-        check.printCheck(argsForDebug);
+        check.printCheck(args);
     }
 }
