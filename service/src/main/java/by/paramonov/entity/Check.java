@@ -38,8 +38,8 @@ public class Check {
             double totalPriceWithVatValue = totalPrice + vatValue;
             System.out.println("\n=========================================");
             System.out.printf("%nTAXABLE TOT.\t\t\t\t\t\t$%.2f", totalPrice);
-            System.out.printf("%nVAT%2.0f%%\t\t\t\t\t\t\t$%.2f%n", vat, vatValue);
-            System.out.printf("TOTAL\t\t\t\t\t\t\t$%.2f%n", totalPriceWithVatValue);
+            System.out.printf("%nVAT%2.0f%%\t\t\t\t\t\t\t\t$%.2f%n", vat, vatValue);
+            System.out.printf("TOTAL\t\t\t\t\t\t\t\t$%.2f%n", totalPriceWithVatValue);
         }
     }
 }
