@@ -17,7 +17,7 @@ public class Main {
         System.out.println(priceList.get(3));
 
         Check check = new Check();
-        String[] argsForDebug = new String[] {"3-5", "4-25"};
+        String[] argsForDebug = new String[] {"3-5", "4-25", "1-4", "2-5" };
         check.printCheck(argsForDebug);
     }
 }
