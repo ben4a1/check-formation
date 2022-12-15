@@ -25,8 +25,9 @@ public class Main {
 
         String[] argsForDebug2 = new String[]{"3-5", "4-25", "1-4", "2-5", "card-14239999"};
         Check check2 = new Check();
-        check2.setOrderListAndDiscountCardIfExists(argsForDebug2);
+        check2.setOrderMapAndDiscountCardIfExists(argsForDebug2);
         check2.printCheck();
+        check2.printCheckToFile();
         System.out.println();
     }
 }

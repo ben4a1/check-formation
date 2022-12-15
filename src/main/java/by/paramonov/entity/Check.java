@@ -4,6 +4,10 @@ package by.paramonov.entity;
 import by.paramonov.Main;
 import lombok.NoArgsConstructor;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -13,6 +17,8 @@ import java.util.*;
  */
 @NoArgsConstructor
 public class Check {
+    private static final File INPUT_PRICE_FILE = new File("src/main/resources/price.txt");
+    private static final File OUTPUT_CHECK_FILE = new File("src/main/resources/check.txt");
     static final String CHECK_START = """
             \t\t\tCASH RECEIPT
             =========================================
@@ -52,7 +58,7 @@ public class Check {
     /**
      * @param inputArgs - parameter set from cmd
      */
-    public void setOrderListAndDiscountCardIfExists(String[] inputArgs) {
+    public void setOrderMapAndDiscountCardIfExists(String[] inputArgs) {
         if (inputArgs.length != 0) {
             // Check first char in inputArgs - if digit -> product with id and count
             for (int i = 0; i < inputArgs.length; i++) {
@@ -76,7 +82,7 @@ public class Check {
         }
     }
 
-    // Formation of positions in the check
+    // Formation of positions in the check from List
     private void createCheckPositions() {
         orderList = new LinkedList<>();
         orderMap.forEach((key, value) -> {
@@ -99,6 +105,10 @@ public class Check {
         });
     }
 
+    private void createCheckPositionsFromFileSource(){
+
+    }
+
     public void printCheck() {
         createCheckPositions();
         double vatValue = totalPrice * vat * 0.01;
@@ -112,6 +122,28 @@ public class Check {
         System.out.printf("%nTAXABLE TOT.\t\t\t\t\t\t$%.2f", totalPrice);
         System.out.printf("%nVAT%2.0f%%\t\t\t\t\t\t\t\t$%.2f%n", vat, vatValue);
         System.out.printf("TOTAL\t\t\t\t\t\t\t\t$%.2f%n", totalPriceWithVatValue);
+    }
+
+    public void printCheckToFile(){
+        createCheckPositions();
+        double vatValue = totalPrice * vat * 0.01;
+        double totalPriceWithVatValue = totalPrice + vatValue;
+
+        try {
+            @SuppressWarnings("resource") FileWriter fw = new FileWriter(OUTPUT_CHECK_FILE);
+            fw.write(CHECK_START);
+            orderList.forEach(x -> {
+                String[] tempStr = x.split(" ");
+                try {
+                    fw.write(String.format("%n%s" + "\t%s" + "\t\t\t\t%s" + "\t\t%s", tempStr[0], tempStr[1], tempStr[2], tempStr[3]));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+            fw.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 
