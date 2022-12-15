@@ -7,15 +7,18 @@ import java.util.List;
 
 /**
  * Класс для создания и вывода чека в магазине
+ * vat - НДС
+ * discount - скидка (0.1 - 10%) при покупке @quantityForDiscount единиц товара
  */
 public class Check {
     static double vat = 20;
     static double totalPrice = 0;
     static double discount = 0.1;
+    static int quantityForDiscount = 5;
 
-    private DiscountCard discountCard;
+    private final DiscountCard discountCard;
 
-    public Check(DiscountCard discountCard){
+    public Check(DiscountCard discountCard) {
         this.discountCard = discountCard;
     }
 
@@ -35,8 +38,10 @@ public class Check {
                     int quantity = Integer.parseInt(split[1]);
                     double price = Double.parseDouble(strings.get(0));
                     double total = quantity * price;
-                    if (quantity > 5) {
+                    if (quantity > quantityForDiscount) {
                         total -= (total * discount);
+                    } else if (discountCard != null) {
+                        total -= (total * discountCard.getDiscountValue() * 0.01);
                     }
                     totalPrice += total;
                     String description = strings.get(1);

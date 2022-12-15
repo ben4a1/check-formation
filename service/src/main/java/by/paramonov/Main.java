@@ -17,7 +17,7 @@ public class Main {
         priceList.put(5, new LinkedList<>(Arrays.asList("1.0", "Button")));
 
         System.out.println(priceList.get(3));
-        DiscountCard discountCard = new DiscountCard((long)(Math.random() * 1_000_000), "Consumer Albertovich", 20);
+        DiscountCard discountCard = new DiscountCard((long)(Math.random() * 1_000_000), "Consumer Albertovich", 3);
         Check check = new Check(discountCard);
         String[] argsForDebug = new String[]{"3-5", "4-25", "1-4", "2-5"};
         check.printCheck(argsForDebug);
