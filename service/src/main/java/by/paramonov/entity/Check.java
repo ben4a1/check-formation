@@ -2,19 +2,22 @@ package by.paramonov.entity;
 
 
 import by.paramonov.Main;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 
 import java.util.List;
-@RequiredArgsConstructor
+
+/**
+ * Класс для создания и вывода чека в магазине
+ */
 public class Check {
     static double vat = 20;
     static double totalPrice = 0;
     static double discount = 0.1;
-    @Getter
-    @Setter
+
     private DiscountCard discountCard;
+
+    public Check(DiscountCard discountCard){
+        this.discountCard = discountCard;
+    }
 
     public void printCheck(String[] inputArgs) {
 

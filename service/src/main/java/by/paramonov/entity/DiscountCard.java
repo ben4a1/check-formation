@@ -5,6 +5,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Класс скидочной карты
+ */
 @Getter
 @Setter
 @NoArgsConstructor
