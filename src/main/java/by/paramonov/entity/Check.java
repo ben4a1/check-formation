@@ -78,21 +78,20 @@ public class Check {
     // Formation of positions in the check
     private void createCheckPositions() {
         orderList = new LinkedList<>();
-        orderMap.entrySet().stream()
-                .forEach(e -> {
-                    int quantity = e.getValue();
-                    String description = priceList.get(e.getKey()).get(1);
-                    double price = Double.parseDouble(priceList.get(e.getKey()).get(0));
-                    double total = quantity * price;
-                    if (quantity > quantityForDiscount) {
-                        total -= (total * quantityDiscount);
-                    }
-                    if (discountCard != null) {
-                        total -= (total * discountCard.getDiscountValue());
-                    }
-                    totalPrice += total;
-                    orderList.add(quantity + " " + description + " $" + price + " $" + total);
-                });
+        orderMap.forEach((key, value) -> {
+            int quantity = value;
+            String description = priceList.get(key).get(1);
+            double price = Double.parseDouble(priceList.get(key).get(0));
+            double total = quantity * price;
+            if (quantity > quantityForDiscount) {
+                total -= (total * quantityDiscount);
+            }
+            if (discountCard != null) {
+                total -= (total * discountCard.getDiscountValue());
+            }
+            totalPrice += total;
+            orderList.add(String.format("%d %s %.2f %.2f", quantity, description, price, total));
+        });
     }
 
     //TODO
@@ -106,8 +105,11 @@ public class Check {
                 + "\tDESCRIPTION"
                 + "\t\t\tPRICE"
                 + "\t\tTOTAL");
-        System.out.println(orderList);
-        System.out.println("=========================================");
+        orderList.forEach(x -> {
+            String[] tempStr = x.split(" ");
+            System.out.printf("%n%s" + "\t%s" + "\t\t\t\t%s" + "\t\t%s", tempStr[0], tempStr[1], tempStr[2], tempStr[3]);
+        });
+        System.out.printf("%n=========================================");
         System.out.printf("%nTAXABLE TOT.\t\t\t\t\t\t$%.2f", totalPrice);
         System.out.printf("%nVAT%2.0f%%\t\t\t\t\t\t\t\t$%.2f%n", vat, vatValue);
         System.out.printf("TOTAL\t\t\t\t\t\t\t\t$%.2f%n", totalPriceWithVatValue);
