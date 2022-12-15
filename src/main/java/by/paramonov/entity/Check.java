@@ -24,7 +24,6 @@ public class Check {
             =========================================
             QTY\tDESCRIPTION\t\t\tPRICE\t\tTOTAL""";
     static double vat = 20;
-    static double totalPrice = 0;
 
     // discount if quantity product > 'quantityForDiscount'
     static double quantityDiscount = 0.1;
@@ -36,7 +35,6 @@ public class Check {
     static int quantityForDiscount = 5;
     static String cardHolder = "Michael Jackson";
     static Map<Integer, List<String>> priceList = new HashMap<>();
-
     static {
         priceList.put(1, new LinkedList<>(Arrays.asList("24.2", "Milk")));
         priceList.put(2, new LinkedList<>(Arrays.asList("35.2", "Cheese")));
@@ -45,6 +43,8 @@ public class Check {
         priceList.put(5, new LinkedList<>(Arrays.asList("1.0", "Button")));
     }
 
+
+    private double totalPrice = 0;
     private DiscountCard discountCard;
 
     // HashMap with Integer idProduct and Integer countProduct
@@ -105,6 +105,7 @@ public class Check {
         });
     }
 
+    //TODO
     private void createCheckPositionsFromFileSource(){
 
     }
@@ -140,6 +141,10 @@ public class Check {
                     throw new RuntimeException(e);
                 }
             });
+            fw.write("\n=========================================");
+            fw.write(String.format("%nTAXABLE TOT.\t\t\t\t\t\t$%.2f", totalPrice));
+            fw.write(String.format("%nVAT%2.0f%%\t\t\t\t\t\t\t\t$%.2f%n", vat, vatValue));
+            fw.write(String.format("TOTAL\t\t\t\t\t\t\t\t$%.2f%n", totalPriceWithVatValue));
             fw.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
