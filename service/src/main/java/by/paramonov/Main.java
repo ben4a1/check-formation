@@ -21,5 +21,10 @@ public class Main {
         Check check = new Check(discountCard);
         String[] argsForDebug = new String[]{"3-5", "4-25", "1-4", "2-5"};
         check.printCheck(argsForDebug);
+
+        String[] argsForDebug2 = new String[]{"3-5", "4-25", "1-4", "2-5", "card-14239999"};
+        Check check2 = new Check();
+        check2.setOrderListAndDiscountCardIfExists(argsForDebug2);
+        System.out.println();
     }
 }
