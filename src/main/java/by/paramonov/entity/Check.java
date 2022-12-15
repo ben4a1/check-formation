@@ -36,6 +36,8 @@ public class Check {
     }
 
     private DiscountCard discountCard;
+
+    // HashMap with Integer idProduct and Integer countProduct
     private final Map<Integer, Integer> orderMap = new HashMap<>();
     private List<String> orderList;
 
@@ -43,8 +45,12 @@ public class Check {
         this.discountCard = discountCard;
     }
 
+    /**
+     *
+     * @param inputArgs - набор
+     * параметров
+     */
     public void setOrderListAndDiscountCardIfExists(String[] inputArgs) {
-        // HashMap with Integer idProduct and Integer countProduct
         if (inputArgs.length != 0) {
             // Check first char in inputArgs - if digit -> product with id and count
             for (int i = 0; i < inputArgs.length; i++) {
@@ -70,7 +76,7 @@ public class Check {
     }
 
     // Formation of positions in the check
-    private void creationCheckPositions() {
+    private void createCheckPositions() {
         orderList = new LinkedList<>();
         orderMap.entrySet().stream()
                 .forEach(e -> {
@@ -81,17 +87,19 @@ public class Check {
                     if (quantity > quantityForDiscount) {
                         total -= (total * quantityDiscount);
                     }
-                    if (discountCard != null){
+                    if (discountCard != null) {
                         total -= (total * discountCard.getDiscountValue());
                     }
                     totalPrice += total;
-                    orderList.add(quantity + " " + description + " " + price + " "+ total);
+                    orderList.add(quantity + " " + description + " $" + price + " $" + total);
                 });
     }
 
     //TODO
     public void printCheck() {
-        creationCheckPositions();
+        createCheckPositions();
+        double vatValue = totalPrice * vat * 0.01;
+        double totalPriceWithVatValue = totalPrice + vatValue;
         System.out.println("CASH RECEIPT");
         System.out.println("=========================================");
         System.out.println("QTY"
@@ -100,7 +108,9 @@ public class Check {
                 + "\t\tTOTAL");
         System.out.println(orderList);
         System.out.println("=========================================");
-        System.out.printf("%.2f", totalPrice);
+        System.out.printf("%nTAXABLE TOT.\t\t\t\t\t\t$%.2f", totalPrice);
+        System.out.printf("%nVAT%2.0f%%\t\t\t\t\t\t\t\t$%.2f%n", vat, vatValue);
+        System.out.printf("TOTAL\t\t\t\t\t\t\t\t$%.2f%n", totalPriceWithVatValue);
     }
 
 
