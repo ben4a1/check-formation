@@ -3,7 +3,9 @@ package by.paramonov.entity;
 
 import by.paramonov.Main;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Класс для создания и вывода чека в магазине
@@ -13,13 +15,53 @@ import java.util.List;
 public class Check {
     static double vat = 20;
     static double totalPrice = 0;
-    static double discount = 0.1;
-    static int quantityForDiscount = 5;
 
-    private final DiscountCard discountCard;
+    //discount if quantity product > 'quantityForDiscount'
+    static double quantityDiscount = 0.1;
+
+    //discount for cardholders
+    static double cardDiscount = 0.03;
+
+    //count of product for use 'quantityDiscount'
+    static int quantityForDiscount = 5;
+    static String cardHolder = "Michael Jackson";
+    static Map<Integer, List<String>> priceList = new HashMap<>();
+
+    static {
+        priceList.putAll(Main.priceList);
+    }
+
+    private DiscountCard discountCard;
+    private List<String> orderList;
 
     public Check(DiscountCard discountCard) {
         this.discountCard = discountCard;
+    }
+
+    public Map<Integer, Integer> parseInputArgs(String[] inputArgs) {
+        //HashMap with Integer idProduct and Integer countProduct
+        Map<Integer, Integer> parsedMap = new HashMap<>();
+        if (inputArgs.length != 0) {
+            // Check first char in inputArgs - if digit -> product with id and count, else -> card
+            for (int i = 0; i < inputArgs.length; i++) {
+                String[] split = inputArgs[i].split("-");
+                if (Character.isDigit(inputArgs[i].charAt(0))) {
+                    int tempId = Integer.parseInt(split[0]);
+                    int tempCount = Integer.parseInt(split[1]);
+                    // If map already contains key (idProduct) - count increases
+                    if (!parsedMap.containsKey(tempId)) {
+                        parsedMap.put(tempId, tempCount);
+                    } else {
+                        int existingCount = parsedMap.get(tempId);
+                        parsedMap.put(tempId, tempCount + existingCount);
+                    }
+
+                } else if (inputArgs[i].startsWith("card")) {
+                    discountCard = new DiscountCard(Long.parseLong(split[1]), cardHolder, cardDiscount);
+                }
+            }
+        }
+        return parsedMap;
     }
 
     public void printCheck(String[] inputArgs) {
@@ -39,7 +81,7 @@ public class Check {
                     double price = Double.parseDouble(strings.get(0));
                     double total = quantity * price;
                     if (quantity > quantityForDiscount) {
-                        total -= (total * discount);
+                        total -= (total * quantityDiscount);
                     } else if (discountCard != null) {
                         total -= (total * discountCard.getDiscountValue() * 0.01);
                     }
