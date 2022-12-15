@@ -4,9 +4,7 @@ package by.paramonov.entity;
 import by.paramonov.Main;
 import lombok.NoArgsConstructor;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Класс для создания и вывода чека в магазине
@@ -30,11 +28,16 @@ public class Check {
     static Map<Integer, List<String>> priceList = new HashMap<>();
 
     static {
-        priceList.putAll(Main.priceList);
+        priceList.put(1, new LinkedList<>(Arrays.asList("24.2", "Milk")));
+        priceList.put(2, new LinkedList<>(Arrays.asList("35.2", "Cheese")));
+        priceList.put(3, new LinkedList<>(Arrays.asList("2.3", "Bread")));
+        priceList.put(4, new LinkedList<>(Arrays.asList("154.99", "Spear")));
+        priceList.put(5, new LinkedList<>(Arrays.asList("1.0", "Button")));
     }
 
     private DiscountCard discountCard;
-    private final Map<Integer, Integer> orderList = new HashMap<>();
+    private final Map<Integer, Integer> orderMap = new HashMap<>();
+    private List<String> orderList;
 
     public Check(DiscountCard discountCard) {
         this.discountCard = discountCard;
@@ -50,11 +53,11 @@ public class Check {
                     int tempId = Integer.parseInt(split[0]);
                     int tempCount = Integer.parseInt(split[1]);
                     // If map already contains key (idProduct) - count increases
-                    if (!orderList.containsKey(tempId)) {
-                        orderList.put(tempId, tempCount);
+                    if (!orderMap.containsKey(tempId)) {
+                        orderMap.put(tempId, tempCount);
                     } else {
-                        int existingCount = orderList.get(tempId);
-                        orderList.put(tempId, tempCount + existingCount);
+                        int existingCount = orderMap.get(tempId);
+                        orderMap.put(tempId, tempCount + existingCount);
                     }
                 }
                 // else -> card with number/id
@@ -64,12 +67,44 @@ public class Check {
                 //TODO else Exception (ParseException)
             }
         }
-
     }
 
-    public void printCheck(){
-
+    // Formation of positions in the check
+    private void creationCheckPositions() {
+        orderList = new LinkedList<>();
+        orderMap.entrySet().stream()
+                .forEach(e -> {
+                    int quantity = e.getValue();
+                    String description = priceList.get(e.getKey()).get(1);
+                    double price = Double.parseDouble(priceList.get(e.getKey()).get(0));
+                    double total = quantity * price;
+                    if (quantity > quantityForDiscount) {
+                        total -= (total * quantityDiscount);
+                    }
+                    if (discountCard != null){
+                        total -= (total * discountCard.getDiscountValue());
+                    }
+                    totalPrice += total;
+                    orderList.add(quantity + " " + description + " " + price + " "+ total);
+                });
     }
+
+    //TODO
+    public void printCheck() {
+        creationCheckPositions();
+        System.out.println("CASH RECEIPT");
+        System.out.println("=========================================");
+        System.out.println("QTY"
+                + "\tDESCRIPTION"
+                + "\t\t\tPRICE"
+                + "\t\tTOTAL");
+        System.out.println(orderList);
+        System.out.println("=========================================");
+        System.out.printf("%.2f", totalPrice);
+    }
+
+
+    @Deprecated
     public void printCheck(String[] inputArgs) {
 
         if (inputArgs.length != 0) {
