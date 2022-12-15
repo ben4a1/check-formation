@@ -67,6 +67,9 @@ public class Check {
 
     }
 
+    public void printCheck(){
+
+    }
     public void printCheck(String[] inputArgs) {
 
         if (inputArgs.length != 0) {
