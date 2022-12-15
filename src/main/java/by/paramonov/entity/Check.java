@@ -13,6 +13,10 @@ import java.util.*;
  */
 @NoArgsConstructor
 public class Check {
+    static final String CHECK_START = """
+            \t\t\tCASH RECEIPT
+            =========================================
+            QTY\tDESCRIPTION\t\t\tPRICE\t\tTOTAL""";
     static double vat = 20;
     static double totalPrice = 0;
 
@@ -46,9 +50,7 @@ public class Check {
     }
 
     /**
-     *
-     * @param inputArgs - набор
-     * параметров
+     * @param inputArgs - parameter set from cmd
      */
     public void setOrderListAndDiscountCardIfExists(String[] inputArgs) {
         if (inputArgs.length != 0) {
@@ -70,7 +72,6 @@ public class Check {
                 else if (split[0].equalsIgnoreCase("card")) {
                     discountCard = new DiscountCard(Long.parseLong(split[1]), cardHolder, cardDiscount);
                 }
-                //TODO else Exception (ParseException)
             }
         }
     }
@@ -79,32 +80,30 @@ public class Check {
     private void createCheckPositions() {
         orderList = new LinkedList<>();
         orderMap.forEach((key, value) -> {
-            int quantity = value;
-            String description = priceList.get(key).get(1);
-            double price = Double.parseDouble(priceList.get(key).get(0));
-            double total = quantity * price;
-            if (quantity > quantityForDiscount) {
-                total -= (total * quantityDiscount);
+            try {
+                int quantity = value;
+                String description = priceList.get(key).get(1);
+                double price = Double.parseDouble(priceList.get(key).get(0));
+                double total = quantity * price;
+                if (quantity > quantityForDiscount) {
+                    total -= (total * quantityDiscount);
+                }
+                if (discountCard != null) {
+                    total -= (total * discountCard.getDiscountValue());
+                }
+                totalPrice += total;
+                orderList.add(String.format("%d %s %.2f %.2f", quantity, description, price, total));
+            } catch (NullPointerException nullPointerException) {
+                nullPointerException.printStackTrace(); //TODO else Exception (ParseException)
             }
-            if (discountCard != null) {
-                total -= (total * discountCard.getDiscountValue());
-            }
-            totalPrice += total;
-            orderList.add(String.format("%d %s %.2f %.2f", quantity, description, price, total));
         });
     }
 
-    //TODO
     public void printCheck() {
         createCheckPositions();
         double vatValue = totalPrice * vat * 0.01;
         double totalPriceWithVatValue = totalPrice + vatValue;
-        System.out.println("CASH RECEIPT");
-        System.out.println("=========================================");
-        System.out.println("QTY"
-                + "\tDESCRIPTION"
-                + "\t\t\tPRICE"
-                + "\t\tTOTAL");
+        System.out.println(CHECK_START);
         orderList.forEach(x -> {
             String[] tempStr = x.split(" ");
             System.out.printf("%n%s" + "\t%s" + "\t\t\t\t%s" + "\t\t%s", tempStr[0], tempStr[1], tempStr[2], tempStr[3]);
@@ -120,12 +119,7 @@ public class Check {
     public void printCheck(String[] inputArgs) {
 
         if (inputArgs.length != 0) {
-            System.out.println("CASH RECEIPT");
-            System.out.println("=========================================");
-            System.out.println("QTY"
-                    + "\tDESCRIPTION"
-                    + "\t\t\tPRICE"
-                    + "\t\tTOTAL");
+            System.out.println(CHECK_START);
             for (int i = 0; i < inputArgs.length; i++) {
                 if (Character.isDigit(inputArgs[i].charAt(0))) {
                     String[] split = inputArgs[i].split("-");
