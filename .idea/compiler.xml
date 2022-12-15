@@ -10,10 +10,12 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="web" />
-        <module name="dal" />
-        <module name="service" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="dal" target="17" />
+      <module name="service" target="17" />
+      <module name="web" target="17" />
+    </bytecodeTargetLevel>
   </component>
 </project>

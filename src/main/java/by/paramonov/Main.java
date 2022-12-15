@@ -17,8 +17,6 @@ public class Main {
 
     public static void main(String[] args) {
 
-
-
         System.out.println(priceList.get(3));
         DiscountCard discountCard = new DiscountCard((long)(Math.random() * 1_000_000), "Consumer Albertovich", 3);
         Check check = new Check(discountCard);
