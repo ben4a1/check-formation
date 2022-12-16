@@ -25,9 +25,13 @@ public class CheckRunner {
 //
         String[] argsForDebug2 = new String[]{"3-5", "4-25", "1-4", "2-5", "card-14239999"};
         CheckService check2 = new CheckService();
-        check2.setOrderMapAndDiscountCardIfExists(argsForDebug2);
+//        check2.setOrderMapAndDiscountCardIfExists(argsForDebug2);
 //        check2.printCheck();
+//        check2.printCheckToFile();
+        check2.setOrderListArray(argsForDebug2);
+        check2.setOrderList();
         check2.printCheckToFile();
+
 
         System.out.println();
     }

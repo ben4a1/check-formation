@@ -44,13 +44,39 @@ public class CheckService {
         priceList.put(5, new LinkedList<>(Arrays.asList("1.0", "Button")));
     }
 
-    static List<String> priceListFromFile = new ArrayList<>();
+    static Map<Integer, String[]> priceListFromFile = new HashMap<>();
+
+    static {
+        try {
+            FileReader fr = new FileReader(INPUT_PRICE_FILE);
+            Scanner scanner = new Scanner(fr);
+            if (scanner.hasNextLine()) {
+                String[] split = scanner.nextLine().split(" ");
+                int id = Integer.parseInt(split[0]);
+                String[] priceAndDescription = new String[]{split[1], split[2]};
+                priceListFromFile.put(id, priceAndDescription);
+                while (scanner.hasNextLine()) {
+                    split = scanner.nextLine().split(" ");
+                    id = Integer.parseInt(split[0]);
+                    priceAndDescription[0] = split[1];
+                    priceAndDescription[1] = split[2];
+                    priceListFromFile.put(id, priceAndDescription);
+                }
+            }
+            fr.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+
+        }
+    }
+
     private double totalPrice = 0;
     private DiscountCard discountCard;
 
     // HashMap with Integer idProduct and Integer countProduct
     private final Map<Integer, Integer> orderMap = new HashMap<>();
     private List<String> orderList;
+    private List<String[]> orderListArray;
 
     public CheckService(DiscountCard discountCard) {
         this.discountCard = discountCard;
@@ -83,23 +109,49 @@ public class CheckService {
         }
     }
 
+
     /**
-     * Method to fill value priceList
+     * Method for parse input args[] and fill orderListArray
      */
-    public void setPriceListFromFile() {
-        try {
-            FileReader fr = new FileReader(INPUT_PRICE_FILE);
-            Scanner scanner = new Scanner(fr);
-            if (scanner.hasNextLine()) {
-                priceListFromFile.add(scanner.nextLine());
-                while (scanner.hasNextLine()) {
-                    priceListFromFile.add(scanner.nextLine());
+    public void setOrderListArray(String[] inputArgs) {
+        orderListArray = new ArrayList<>();
+        if (inputArgs.length != 0) {
+            for (int i = 0; i < inputArgs.length; i++) {
+                String[] split = inputArgs[i].split("-");
+                orderListArray.add(split);
+            }
+        }
+    }
+
+    public void setOrderList() {
+        orderList = new LinkedList<>();
+        orderListArray.forEach(x -> {
+            try {
+                int id = Integer.parseInt(x[0]);
+                int quantity = Integer.parseInt(x[1]);
+                double price = Double.parseDouble(priceListFromFile.get(id)[0]);
+                String description = priceListFromFile.get(id)[1];
+                setTempTotal(quantity, price, description);
+            } catch (NullPointerException nullPointerException) {
+                System.out.printf("Product with ID='%s' does not exist yet", x[0]);
+            } catch (NumberFormatException nfe) {
+                if (x[0].equalsIgnoreCase("card")) {
+                    discountCard = new DiscountCard(Long.parseLong(x[1]), cardHolder, cardDiscount);
                 }
             }
-            fr.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        });
+    }
+
+    private void setTempTotal(int quantity, double price, String description) {
+        double total = quantity * price;
+        if (quantity > quantityForDiscount) {
+            total -= (total * quantityDiscount);
         }
+        if (discountCard != null) {
+            total -= (total * discountCard.getDiscountValue());
+        }
+        totalPrice += total;
+        orderList.add(String.format("%d %s %.2f %.2f", quantity, description, price, total));
     }
 
     /**
@@ -112,15 +164,7 @@ public class CheckService {
                 int quantity = value;
                 String description = priceList.get(key).get(1);
                 double price = Double.parseDouble(priceList.get(key).get(0));
-                double total = quantity * price;
-                if (quantity > quantityForDiscount) {
-                    total -= (total * quantityDiscount);
-                }
-                if (discountCard != null) {
-                    total -= (total * discountCard.getDiscountValue());
-                }
-                totalPrice += total;
-                orderList.add(String.format("%d %s %.2f %.2f", quantity, description, price, total));
+                setTempTotal(quantity, price, description);
             } catch (NullPointerException nullPointerException) {
                 System.out.printf("Product with ID='%d' does not exist yet", key);
             }
