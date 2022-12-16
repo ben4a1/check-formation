@@ -1,11 +1,11 @@
-package by.paramonov.entity;
+package by.paramonov.service;
 
 
 import by.paramonov.Main;
+import by.paramonov.entity.DiscountCard;
 import lombok.NoArgsConstructor;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
@@ -100,7 +100,7 @@ public class Check {
                 totalPrice += total;
                 orderList.add(String.format("%d %s %.2f %.2f", quantity, description, price, total));
             } catch (NullPointerException nullPointerException) {
-                nullPointerException.printStackTrace(); //TODO else Exception (ParseException)
+                System.out.printf("Product with ID='%d' does not exist yet", key);
             }
         });
     }

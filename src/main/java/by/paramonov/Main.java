@@ -1,6 +1,6 @@
 package by.paramonov;
 
-import by.paramonov.entity.Check;
+import by.paramonov.service.Check;
 import by.paramonov.entity.DiscountCard;
 
 import java.util.*;
@@ -23,7 +23,7 @@ public class Main {
         String[] argsForDebug = new String[]{"3-5", "4-25", "1-4", "2-5"};
         check.printCheck(argsForDebug);
 
-        String[] argsForDebug2 = new String[]{"3-5", "4-25", "1-4", "2-5", "card-14239999"};
+        String[] argsForDebug2 = new String[]{"33-5", "4-25", "1-4", "2-5", "card-14239999"};
         Check check2 = new Check();
         check2.setOrderMapAndDiscountCardIfExists(argsForDebug2);
         check2.printCheck();
