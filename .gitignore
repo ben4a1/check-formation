@@ -5,6 +5,10 @@ target/
 
 src/main/resources/check.txt
 
+.gitignore
+
+.idea/
+
 ### IntelliJ IDEA ###
 .idea/modules.xml
 .idea/jarRepositories.xml
