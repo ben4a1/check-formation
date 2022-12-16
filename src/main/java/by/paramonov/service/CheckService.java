@@ -1,13 +1,11 @@
 package by.paramonov.service;
 
 
-import by.paramonov.Main;
+import by.paramonov.CheckRunner;
 import by.paramonov.entity.DiscountCard;
 import lombok.NoArgsConstructor;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 /**
@@ -16,9 +14,11 @@ import java.util.*;
  * discount - скидка (0.1 - 10%) при покупке @quantityForDiscount единиц товара
  */
 @NoArgsConstructor
-public class Check {
-    private static final File INPUT_PRICE_FILE = new File("src/main/resources/price.txt");
-    private static final File OUTPUT_CHECK_FILE = new File("src/main/resources/check.txt");
+public class CheckService {
+    private static final String INPUT_PRICE_FILE_PATH = "src/main/resources/price.txt";
+    private static final String OUTPUT_CHECK_FILE_PATH = "src/main/resources/check.txt";
+    private static final File INPUT_PRICE_FILE = new File(INPUT_PRICE_FILE_PATH);
+    private static final File OUTPUT_CHECK_FILE = new File(OUTPUT_CHECK_FILE_PATH);
     static final String CHECK_START = """
             \t\t\tCASH RECEIPT
             =========================================
@@ -35,6 +35,7 @@ public class Check {
     static int quantityForDiscount = 5;
     static String cardHolder = "Michael Jackson";
     static Map<Integer, List<String>> priceList = new HashMap<>();
+
     static {
         priceList.put(1, new LinkedList<>(Arrays.asList("24.2", "Milk")));
         priceList.put(2, new LinkedList<>(Arrays.asList("35.2", "Cheese")));
@@ -43,7 +44,7 @@ public class Check {
         priceList.put(5, new LinkedList<>(Arrays.asList("1.0", "Button")));
     }
 
-
+    static List<String> priceListFromFile = new ArrayList<>();
     private double totalPrice = 0;
     private DiscountCard discountCard;
 
@@ -51,7 +52,7 @@ public class Check {
     private final Map<Integer, Integer> orderMap = new HashMap<>();
     private List<String> orderList;
 
-    public Check(DiscountCard discountCard) {
+    public CheckService(DiscountCard discountCard) {
         this.discountCard = discountCard;
     }
 
@@ -82,7 +83,28 @@ public class Check {
         }
     }
 
-    // Formation of positions in the check from List
+    /**
+     * Method to fill value priceList
+     */
+    public void setPriceListFromFile() {
+        try {
+            FileReader fr = new FileReader(INPUT_PRICE_FILE);
+            Scanner scanner = new Scanner(fr);
+            if (scanner.hasNextLine()) {
+                priceListFromFile.add(scanner.nextLine());
+                while (scanner.hasNextLine()) {
+                    priceListFromFile.add(scanner.nextLine());
+                }
+            }
+            fr.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Formation of positions in the check from List
+     */
     private void createCheckPositions() {
         orderList = new LinkedList<>();
         orderMap.forEach((key, value) -> {
@@ -105,10 +127,6 @@ public class Check {
         });
     }
 
-    //TODO
-    private void createCheckPositionsFromFileSource(){
-
-    }
 
     public void printCheck() {
         createCheckPositions();
@@ -125,13 +143,13 @@ public class Check {
         System.out.printf("TOTAL\t\t\t\t\t\t\t\t$%.2f%n", totalPriceWithVatValue);
     }
 
-    public void printCheckToFile(){
+    public void printCheckToFile() {
         createCheckPositions();
         double vatValue = totalPrice * vat * 0.01;
         double totalPriceWithVatValue = totalPrice + vatValue;
 
         try {
-            @SuppressWarnings("resource") FileWriter fw = new FileWriter(OUTPUT_CHECK_FILE);
+            FileWriter fw = new FileWriter(OUTPUT_CHECK_FILE);
             fw.write(CHECK_START);
             orderList.forEach(x -> {
                 String[] tempStr = x.split(" ");
@@ -160,7 +178,7 @@ public class Check {
             for (int i = 0; i < inputArgs.length; i++) {
                 if (Character.isDigit(inputArgs[i].charAt(0))) {
                     String[] split = inputArgs[i].split("-");
-                    List<String> strings = Main.priceList.get(Integer.valueOf(split[0]));
+                    List<String> strings = CheckRunner.priceList.get(Integer.valueOf(split[0]));
                     int quantity = Integer.parseInt(split[1]);
                     double price = Double.parseDouble(strings.get(0));
                     double total = quantity * price;

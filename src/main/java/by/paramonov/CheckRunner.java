@@ -1,11 +1,11 @@
 package by.paramonov;
 
-import by.paramonov.service.Check;
+import by.paramonov.service.CheckService;
 import by.paramonov.entity.DiscountCard;
 
 import java.util.*;
 
-public class Main {
+public class CheckRunner {
     public static Map<Integer, List<String>> priceList = new HashMap<>();
     static {
         priceList.put(1, new LinkedList<>(Arrays.asList("24.2", "Milk")));
@@ -17,17 +17,18 @@ public class Main {
 
     public static void main(String[] args) {
 
-        System.out.println(priceList.get(3));
-        DiscountCard discountCard = new DiscountCard((long)(Math.random() * 1_000_000), "Consumer Albertovich", 3);
-        Check check = new Check(discountCard);
-        String[] argsForDebug = new String[]{"3-5", "4-25", "1-4", "2-5"};
-        check.printCheck(argsForDebug);
-
-        String[] argsForDebug2 = new String[]{"33-5", "4-25", "1-4", "2-5", "card-14239999"};
-        Check check2 = new Check();
+//        System.out.println(priceList.get(3));
+//        DiscountCard discountCard = new DiscountCard((long)(Math.random() * 1_000_000), "Consumer Albertovich", 3);
+//        CheckService check = new CheckService(discountCard);
+//        String[] argsForDebug = new String[]{"3-5", "4-25", "1-4", "2-5"};
+//        check.printCheck(argsForDebug);
+//
+        String[] argsForDebug2 = new String[]{"3-5", "4-25", "1-4", "2-5", "card-14239999"};
+        CheckService check2 = new CheckService();
         check2.setOrderMapAndDiscountCardIfExists(argsForDebug2);
-        check2.printCheck();
+//        check2.printCheck();
         check2.printCheckToFile();
+
         System.out.println();
     }
 }
